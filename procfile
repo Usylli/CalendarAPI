@@ -1,2 +1,2 @@
 release: python manage.py migrate
-web: gunicorn calendarAPI.wsgi --log-file=-
+web: gunicorn CalendarAPI.wsgi --log-file=-
