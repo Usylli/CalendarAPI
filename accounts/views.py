@@ -1,4 +1,3 @@
-from urllib import response
 from django.forms import ValidationError
 from django.shortcuts import render
 from django.contrib.auth import login, logout
