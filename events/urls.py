@@ -3,6 +3,6 @@ from django.urls import path, include
 from .views import ListEvents, CreateEvent
 
 urlpatterns = [
-    path('list/', ListEvents, name="list_events"),
-    path('create/', CreateEvent, name="create_event"),
+    path('api/list/', ListEvents, name="list_events"),
+    path('api/create/', CreateEvent, name="create_event"),
 ]

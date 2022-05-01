@@ -20,6 +20,7 @@ def ListEvents(request):
     user = Users.objects.get(id=user_id)
     events = user.event_set.all()
     serializer = EventListSerializer(events, many=True)
+    
     return Response(serializer.data)
 
 @api_view(['POST'])
@@ -34,7 +35,7 @@ def CreateEvent(request):
     data["name"] = reqBody.get('name')
     data["start_date"] = reqBody.get('start_date', timezone.now())
     data["end_date"] = reqBody.get('end_date', timezone.now().replace(hour=23, minute=59, second=59, microsecond=999999))
-    data["ReminderTime"] = reqBody.get('reminder_time', timezone.now() + timedelta(hours=1))
+    data["ReminderTime"] = reqBody.get('reminder_time', timezone.now() - timedelta(hours=1))
     serializer = EventListSerializer(data=data)
     if serializer.is_valid():
         event = serializer.save()

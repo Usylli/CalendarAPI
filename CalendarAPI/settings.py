@@ -135,7 +135,7 @@ AUTH_USER_MODEL='accounts.Users'
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Almaty'
 
 USE_I18N = True
 
