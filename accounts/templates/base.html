@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Django{% endblock %}</title>
+    <style>
+        nav ul {
+          list-style-type: none;
+          margin: 0;
+          padding: 0;
+        }
+        
+        nav li {
+          display: inline;
+        }
+    </style>
+</head>
+<body>
+    <nav style="margin-bottom: 20px">
+        <ul>
+            <li><a href="{% url 'events:index' %}">Event</a></li>
+            <li><a href="{% url 'users:login' %}">Login</a></li>
+            <li><a href="{% url 'users:register' %}">Register</a></li>
+            <li><a href="{% url 'events:add_event' %}">Add event</a></li>
+            <button style="float: right" onclick="logout_user()">Logout</button>
+          </ul>
+    </nav>
+    {% block content %}{% endblock %}
+    <script>
+        function logout_user(){
+            var url = "{% url 'users:logout_api' %}";
+
+            var xhr = new XMLHttpRequest();
+            xhr.open("GET", url);
+            
+            xhr.setRequestHeader("Authorization", "token " + getCookie('access_token'));
+            
+            xhr.onreadystatechange = function () {
+               if (xhr.readyState === 4) {
+                  console.log(xhr.status);
+                  console.log(xhr.responseText);
+               }
+            };
+            
+            xhr.send();
+            setTimeout(() => {
+                location.replace("{% url 'users:login' %}");
+              }, 2000)
+            
+        }
+
+        function getCookie(cname) {
+            let name = cname + "=";
+            let decodedCookie = decodeURIComponent(document.cookie);
+            let ca = decodedCookie.split(';');
+            for(let i = 0; i <ca.length; i++) {
+              let c = ca[i];
+              while (c.charAt(0) == ' ') {
+                c = c.substring(1);
+              }
+              if (c.indexOf(name) == 0) {
+                return c.substring(name.length, c.length);
+              }
+            }
+            return "";
+          }
+    </script>
+    {% block script %}
+    {% endblock %}
+</body>

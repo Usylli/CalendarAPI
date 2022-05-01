@@ -1,7 +1,9 @@
 from django.forms import ValidationError
+from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.contrib.auth import login, logout
 from django.contrib.auth.hashers import check_password
+from django.urls import reverse_lazy
 from psycopg2 import IntegrityError
 from rest_framework import status
 from rest_framework.permissions import AllowAny, IsAuthenticated
@@ -29,8 +31,9 @@ def Register_Users(request):
             data["token"] = token
         else:
             data = serializer.errors
+        #response = Response(data, status=status.HTTP_201_CREATED)
         
-        return Response(data, status=status.HTTP_201_CREATED)
+        return HttpResponseRedirect(redirect_to=reverse_lazy('users:login'))
     except IntegrityError as e:
         account=Users.objects.get(username='')
         account.delete()
@@ -44,9 +47,9 @@ def Register_Users(request):
 @permission_classes([AllowAny])
 def login_user(request):
     data = {}
-    reqBody = json.loads(request.body)
-    email = reqBody['email_address']
-    password = reqBody['password']
+    #reqBody = json.loads(request.body)
+    email = request.POST['email']
+    password = request.POST['password'] 
     try:
         account = Users.objects.get(email_address=email)
     except BaseException as e:
@@ -62,9 +65,8 @@ def login_user(request):
             data["message"] = "user logged in"
             data["email_address"] = account.email_address
             data["token"] = token
-            response = Response(data)
+            response = HttpResponseRedirect(redirect_to=reverse_lazy('events:index'))
             response.set_cookie('access_token', token)
-
             return response
         else:
             raise ValidationError({"404": f'Account not active'})
@@ -74,24 +76,25 @@ def login_user(request):
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def User_logout(request):
-    access_token = request.COOKIES['access_token']
-    if access_token:
-        hed = {'Authorization': 'Token ' + access_token}
-        response = Response('User Logged out successfully', headers=hed)
-        response.delete_cookie('access_token')
-        request.user.auth_token.delete()
-        logout(request)
-        return response
-    else:
-        return Response({"detail": "s credentials were not provided."})
+    response = Response('User Logged out successfully')
+    response.delete_cookie('access_token')
+    request.user.auth_token.delete()
+    logout(request)
+    return response
+
+def login_u(request):
+    return render(request, 'login.html')
+
+def register_u(request):
+    return render(request, 'register.html')
+
     
     
     
     
     
     
-    
-#     {
+#  {
 # "email_address":"test@gmail.com",
 # "username":"khabib",
 # "password":"1234",

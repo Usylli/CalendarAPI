@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+{% block title %}Add Event{% endblock %}
+{% block content%}
+{% csrf_token %}
+<form method="POST">
+    <label for="name">Name:</label>
+    <input type="text" name="name" id="name" required><br><br>
+    <label for="start_date">Choose a time for start of your event:</label>
+    <input type="datetime-local" id="start_date" name="start_date" required>
+    <label for="end_date">Choose a time for end of your event:</label>
+    <input type="datetime-local" id="end_date" name="end_date">
+    <fieldset>
+    <legend>Select a time to reminder:</legend>
+        <div>
+        <input type="radio" id="hour" name="reminder" value="1"
+                checked>
+        <label for="hour">Hour before</label>
+        </div>
+
+        <div>
+        <input type="radio" id="two_hour" name="reminder" value="2">
+        <label for="two_hour">Two hour before</label>
+        </div>
+
+        <div>
+        <input type="radio" id="four_hour" name="reminder" value="4">
+        <label for="four_hour">Four hour before</label>
+        </div>
+
+        <div>
+            <input type="radio" id="day" name="reminder" value="24">
+            <label for="day">Day before</label>
+        </div>
+
+        <div>
+            <input type="radio" id="week" name="reminder" value="168">
+            <label for="week">Day before</label>
+        </div>
+
+    </fieldset>
+</form>
+<button onclick="add_event()">Add Event</button>
+{% endblock %}
+{% block script%}
+<script>
+    function add_event(){
+        let name = document.querySelector('#name').value
+        let start_date = document.querySelector('#start_date').value;
+        let end_date = document.querySelector('#end_date').value
+        let reminder_time = document.querySelector('input[name="reminder"]:checked').value;
+        let s_date = new Date(start_date)
+        let reminder_date = reduceHours(reminder_time, s_date)
+        var url = "{% url 'events:create_event' %}";
+        if(start_date == end_date){
+            alert('start_date should not be equal to end_date')
+            return null
+        }
+        if (start_date == ''){
+            alert('Select start date')
+        }
+        if (end_date == ''){
+            end_of_day = new Date()
+            end_date_sec = end_of_day.setUTCHours(23, 59, 59);
+            end_date = new Date(end_date_sec).toISOString()
+        }
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", url);
+
+        xhr.setRequestHeader("Authorization", "token " + getCookie('access_token'));
+        xhr.setRequestHeader("Content-Type", "application/json");
+
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4) {
+                console.log(xhr.status);
+                console.log(xhr.responseText);
+            }
+        };
+
+        var data = `{
+            "name": "${name}",
+            "start_date": "${start_date}",
+            "end_date": "${end_date}",
+            "reminder_time": "${reminder_date.toISOString()}"
+        }`;
+
+        xhr.send(data);
+        
+        setTimeout(() => {
+            location.replace("{% url 'events:index' %}");
+          }, 2000)
+    }
+
+    function reduceHours(numOfHours, date = new Date()) {
+        date.setTime(date.getTime() - numOfHours * 60 * 60 * 1000);
+      
+        return date;
+    }
+</script>
+{% endblock%}
