@@ -15,7 +15,7 @@ from .serializers import EventListSerializer
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def ListEvents(request):
-    access_token = request.COOKIES['access_token']
+    access_token = request.headers['Authorization'][6:]
     user_id = Token.objects.get(key=access_token).user_id
     user = Users.objects.get(id=user_id)
     events = user.event_set.all()
@@ -28,7 +28,7 @@ def ListEvents(request):
 def CreateEvent(request):
     data = {}
     reqBody = json.loads(request.body)
-    access_token = request.COOKIES['access_token']
+    access_token = request.headers['Authorization'][6:]
     user_id = Token.objects.get(key=access_token).user_id
     data['user'] = user_id
     data["message"] = "event created successfully"
