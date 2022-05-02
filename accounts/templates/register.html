@@ -1,16 +1,16 @@
 {% extends "base.html" %}
 {% block title %}Register{% endblock %}
 {% block content %}
-    <form action={% url 'users:register_api' %} method="post">
-        <label for="email_address">Email:</label>
-        <input type="email" name="email_address" id="email_address" required><br><br>
-        <label for="username">Username:</label>
-        <input type="text" name="username" id="username" required><br><br>
-        <label for="name">Name:</label>
-        <input type="text" name="name" id="name" required><br><br>
-        <label for="password">Password:</label>
-        <input type="password" name="password" id="password" required>
-        <input type="submit" value="Register">
+    <form action={% url 'users:register_api' %} method="post" style='width: 15%' class="p-2">
+        <label for="email_address" class="form-label">Email:</label>
+        <input type="email" class="form-control" name="email_address" id="email_address" required>
+        <label for="username" class="form-label">Username:</label>
+        <input type="text" class="form-control" name="username" id="username" required>
+        <label for="name" class="form-label">Name:</label>
+        <input type="text" class="form-control" name="name" id="name" required>
+        <label for="password" class="form-label">Password:</label>
+        <input type="password" class="form-control" name="password" id="password" required>
+        <input type="submit" class="btn btn-primary mt-2" value="Register">
     </form>
     <br></br>
 {% endblock %}

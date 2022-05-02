@@ -1,12 +1,12 @@
 {% extends "base.html" %}
 {% block title %}Login{% endblock %}
 {% block content %}
-    <form action={% url 'users:login_api' %} method="post">
-        <label for="email">Email:</label>
-        <input type="email" name="email" id="email" required><br><br>
-        <label for="password">Password:</label>
-        <input type="password" name="password" id="password" required>
-        <input type="submit" value="Login">
+    <form action={% url 'users:login_api' %} method="post" style='width: 15%' class="p-2">
+        <label for="email" class="form-label">Email:</label>
+        <input type="email" class="form-control mb-1" name="email" id="email" required>
+        <label for="password" class="form-label">Password:</label>
+        <input type="password" class="form-control" name="password" id="password" required>
+        <input type="submit" class="btn btn-primary mt-2" value="Login">
     </form>
     <br></br>
 {% endblock %}

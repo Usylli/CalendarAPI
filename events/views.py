@@ -29,10 +29,15 @@ def ListEvents(request):
     access_token = request.headers['Authorization'][6:]
     user_id = Token.objects.get(key=access_token).user_id
     user = Users.objects.get(id=user_id)
-    events = user.event_set.all()
-    serializer = EventListSerializer(events, many=True)
+    month = request.GET.get('month', None)
+    if month is None:
+        events = user.event_set.order_by('start_date')
+    else:
+        events = user.event_set.filter(start_date__month = month)
     
+    serializer = EventListSerializer(events, many=True) 
     return Response(serializer.data)
+
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
@@ -61,7 +66,9 @@ def CreateEvent(request):
         return Response(data)
     
 def indexView(request):
-    url = request.scheme + '://' + request.META['HTTP_HOST'] + reverse_lazy('events:list_events')
+    month_num = request.GET.get('month', None)
+    month_add = '' if month_num is None else f'?month={month_num}'
+    url = request.scheme + '://' + request.META['HTTP_HOST'] + reverse_lazy('events:list_events') + month_add
     access_token = request.COOKIES.get('access_token', None)
     if access_token is None:
         return render(request, 'restricted.html')
@@ -74,45 +81,41 @@ def indexView(request):
         events = json.loads(content)
         print(events)
         return render(request, 'index.html', {"events" : events})
+
+def indexViewByMonth(request, num=1):
+    url = request.scheme + '://' + request.META['HTTP_HOST'] + reverse_lazy('events:list_events')
+    access_token = request.COOKIES.get('access_token', None)
+    if access_token is None:
+        return render(request, 'restricted.html')
+    else:
+        headers = CaseInsensitiveDict()
+        headers["Authorization"] = "token " + access_token
+        
+        resp = requests.get(url, headers=headers)
+        content = resp.content.decode("utf-8")
+        events = json.loads(content)
+        print(events)
+        return render(request, 'index.html', {"events" : events})
     
 def addEventView(request):
     return render(request, 'addEvent.html')
     
 def mail(event_name, user_address, send_time):
-
-    # initialize connection to our email server,
-    # we will use gmail here
     smtp = smtplib.SMTP('smtp.gmail.com', 587)
     smtp.ehlo()
     smtp.starttls()
-
-    # Login with your email and password
     smtp.login('alihangames1@gmail.com', 'UzumakiAlikhan')
-
-    # Call the message function
     msg = message(event_name)
-
-    # Make a list of emails, where you wanna send mail
     to = [user_address]
-    
     send_time = datetime.fromisoformat(send_time.isoformat())
     time.sleep(send_time.timestamp() - time.time())
-
     smtp.sendmail(from_addr="alihangames1@gmail.com",
                 to_addrs=to, msg=msg.as_string())
-
-    # Finally, don't forget to close the connection
     smtp.quit()
 
 def message(text=""):
-	
-	# build message contents
 	msg = MIMEMultipart()
-	
-	# Add Subject
 	msg['Subject'] = "Calendar Notification"
-	
-	# Add text contents
 	msg.attach(MIMEText(text))
 
 	return msg

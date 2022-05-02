@@ -2,42 +2,48 @@
 {% block title %}Add Event{% endblock %}
 {% block content%}
 {% csrf_token %}
-<form method="POST">
-    <label for="name">Name:</label>
-    <input type="text" name="name" id="name" required><br><br>
-    <label for="start_date">Choose a time for start of your event:</label>
-    <input type="datetime-local" id="start_date" name="start_date" required>
-    <label for="end_date">Choose a time for end of your event:</label>
-    <input type="datetime-local" id="end_date" name="end_date">
-    <fieldset>
-    <legend>Select a time to reminder:</legend>
-        <div>
-        <input type="radio" id="hour" name="reminder" value="1"
-                checked>
-        <label for="hour">Hour before</label>
+<form method="POST" class="p-2">
+    <div class="row">
+        <div class="col-3">
+            <label for="name"  class="form-label">Name:</label>
+            <input type="text" class="form-control" name="name" id="name" required>
+            <label for="start_date" class="form-label">Choose a time for start of your event:</label>
+            <input type="datetime-local" class="form-control" id="start_date" name="start_date" required>
+            <label for="end_date" class="form-label">Choose a time for end of your event:</label>
+            <input type="datetime-local" class="form-control" id="end_date" name="end_date">
         </div>
+        <div class="col-4">
+            <fieldset>
+            <legend>Select a time to reminder:</legend>
+                <div>
+                <input type="radio" class="form-check-input" id="hour" name="reminder" value="1"
+                        checked>
+                <label for="hour">Hour before</label>
+                </div>
 
-        <div>
-        <input type="radio" id="two_hour" name="reminder" value="2">
-        <label for="two_hour">Two hour before</label>
+                <div>
+                <input type="radio" class="form-check-input" id="two_hour" name="reminder" value="2">
+                <label for="two_hour">Two hour before</label>
+                </div>
+
+                <div>
+                <input type="radio" class="form-check-input" id="four_hour" name="reminder" value="4">
+                <label for="four_hour">Four hour before</label>
+                </div>
+
+                <div>
+                    <input type="radio" class="form-check-input" id="day" name="reminder" value="24">
+                    <label for="day">Day before</label>
+                </div>
+
+                <div>
+                    <input type="radio" class="form-check-input" id="week" name="reminder" value="168">
+                    <label for="week">Week before</label>
+                </div>
+
+            </fieldset>
         </div>
-
-        <div>
-        <input type="radio" id="four_hour" name="reminder" value="4">
-        <label for="four_hour">Four hour before</label>
-        </div>
-
-        <div>
-            <input type="radio" id="day" name="reminder" value="24">
-            <label for="day">Day before</label>
-        </div>
-
-        <div>
-            <input type="radio" id="week" name="reminder" value="168">
-            <label for="week">Day before</label>
-        </div>
-
-    </fieldset>
+    </div>
 </form>
 <button onclick="add_event()">Add Event</button>
 {% endblock %}
