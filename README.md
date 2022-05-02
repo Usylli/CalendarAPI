@@ -4,7 +4,7 @@
 авторизации, оповещения о приближающихся событиях и возможностью добавления пользовательских событий.
 ____
 
-Already deployed on [Heroku](http://127.0.0.1:8000/events/)
+Already deployed on [Heroku](http://calendar-usylli.herokuapp.com/events/)
 
 ____
 
